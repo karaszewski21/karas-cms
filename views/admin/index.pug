@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+  nav
+    ul 
+      li
+        a(href="/admin/news/add") Add News
+
+  h1= title
+  table
+    tr  
+      th id 
+      th title
+      th action
+    each item, index in news
+      tr  
+        td=index
+        td=item.title
+        td=item.createdDate
+        tg 
+          a(href=`/admin/news/remove/${item._id}`) Remove

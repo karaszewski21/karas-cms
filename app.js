@@ -2,7 +2,10 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+const config = require("./config.js");
 const logger = require("morgan");
+const mongoose = require("mongoose");
 
 const indexRouter = require("./routes/index");
 const indexNews = require("./routes/news");
@@ -11,11 +14,29 @@ const indexAdmin = require("./routes/admin");
 
 const { localPath } = require("./middleware/middleware");
 
+try {
+  mongoose.connect(
+    config.db,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    () => console.log("connected")
+  );
+} catch (error) {
+  console.log("could not connect");
+}
+
 const app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
+
+app.use(
+  cookieSession({
+    name: "session",
+    keys: config.keySession,
+    maxAge: config.maxAgeSession,
+  })
+);
 
 app.use(logger("dev"));
 app.use(express.json());
